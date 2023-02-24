@@ -1,16 +1,10 @@
 package com.mjozwk.featureflag.api;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-public class UserFeatureDTO {
+public record UserFeatureDTO (
         @NotNull
-        private Long userId;
+        Long featureFlagId,
         @NotNull
-        private Long featureFlagId;
-        @NotNull
-        private Boolean isEnabledForUser;
-}
+        Boolean isEnabledForUser
+) {}

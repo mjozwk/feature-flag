@@ -58,11 +58,10 @@ class FeatureFlagIntegrationTest {
     @Test
     void shouldCreateFeatureFlag() throws Exception {
         // given
-        FeatureFlagDTO featureFlagDTO = new FeatureFlagDTO();
-        featureFlagDTO.setFeatureName("featureName");
+        FeatureFlagDTO featureFlagDTO = new FeatureFlagDTO("featureName");
 
         // when
-        mockMvc.perform(post("/feature-flag/create")
+        mockMvc.perform(post("/feature-flag")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(featureFlagDTO)))
                 .andExpect(status().isOk());
@@ -84,13 +83,10 @@ class FeatureFlagIntegrationTest {
         User user = new User();
         user = userRepository.save(user);
 
-        UserFeatureDTO userFeatureDTO = new UserFeatureDTO();
-        userFeatureDTO.setFeatureFlagId(featureFlag.getId());
-        userFeatureDTO.setUserId(user.getId());
-        userFeatureDTO.setIsEnabledForUser(true);
+        UserFeatureDTO userFeatureDTO = new UserFeatureDTO(featureFlag.getId(), true);
 
         // when
-        mockMvc.perform(post("/feature-flag/switchForUser")
+        mockMvc.perform(post("/user-feature/switch/users/" + user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(userFeatureDTO)))
                 .andExpect(status().isOk());
@@ -133,7 +129,7 @@ class FeatureFlagIntegrationTest {
         userFeatureRepository.save(userFeature);
 
         // when
-        MvcResult mvcResult = mockMvc.perform(get("/feature-flag/getGlobalAndEnabledForUser/" + user.getId()))
+        MvcResult mvcResult = mockMvc.perform(get("/global-and-enabled/users/" + user.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -144,7 +140,7 @@ class FeatureFlagIntegrationTest {
         List<GlobalAndEnabledForUserDTO> result = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<>() {});
         // then
         assertThat(result).hasSize(2)
-                .extracting(GlobalAndEnabledForUserDTO::getFeatureName)
+                .extracting(GlobalAndEnabledForUserDTO::featureName)
                 .contains("feature1", "feature3")
                 .doesNotContain("feature2");
     }

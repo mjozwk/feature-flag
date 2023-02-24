@@ -1,12 +1,7 @@
 package com.mjozwk.featureflag.api;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-public class GlobalAndEnabledForUserDTO {
-    private Long id;
-    private String featureName;
-    private boolean isGlobal;
-}
+public record GlobalAndEnabledForUserDTO (
+    Long id,
+    String featureName,
+    boolean isGlobal
+) {}

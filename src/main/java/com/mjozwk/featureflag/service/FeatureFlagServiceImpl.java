@@ -30,25 +30,25 @@ public class FeatureFlagServiceImpl implements FeatureFlagService {
 
     @Override
     public void createFeature(FeatureFlagDTO featureFlagDTO) throws FeatureFlagBadParamException {
-        if (Boolean.TRUE.equals(featureFlagRepository.existsByFeatureName(featureFlagDTO.getFeatureName()))) {
+        if (Boolean.TRUE.equals(featureFlagRepository.existsByFeatureName(featureFlagDTO.featureName()))) {
             throw new FeatureFlagBadParamException("Feature already exists");
         }
 
         FeatureFlag featureFlag = new FeatureFlag();
-        featureFlag.setFeatureName(featureFlagDTO.getFeatureName());
+        featureFlag.setFeatureName(featureFlagDTO.featureName());
         featureFlagRepository.save(featureFlag);
     }
 
     @Override
-    public void switchForUser(UserFeatureDTO userFeatureDTO) throws FeatureFlagBadParamException {
-        FeatureFlag featureFlag = featureFlagRepository.findById(userFeatureDTO.getFeatureFlagId()).orElseThrow(() -> new FeatureFlagBadParamException("Feature not found"));
+    public void switchForUser(UserFeatureDTO userFeatureDTO, Long userId) throws FeatureFlagBadParamException {
+        FeatureFlag featureFlag = featureFlagRepository.findById(userFeatureDTO.featureFlagId()).orElseThrow(() -> new FeatureFlagBadParamException("Feature not found"));
 
-        User user = userRepository.findById(userFeatureDTO.getUserId()).orElseThrow(() -> new FeatureFlagBadParamException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new FeatureFlagBadParamException("User not found"));
 
         UserFeature userFeature = userFeatureRepository.findByFeatureAndUser(featureFlag, user).orElse(new UserFeature());
         userFeature.setFeature(featureFlag);
         userFeature.setUser(user);
-        userFeature.setEnabledForUser(userFeatureDTO.getIsEnabledForUser());
+        userFeature.setEnabledForUser(userFeatureDTO.isEnabledForUser());
 
 
         userFeatureRepository.save(userFeature);
@@ -63,13 +63,7 @@ public class FeatureFlagServiceImpl implements FeatureFlagService {
 
     private List<GlobalAndEnabledForUserDTO> mapToGlobalAndEnabledForUserDTO(List<FeatureFlag> globalAndEnabledForUser) {
         return globalAndEnabledForUser.stream()
-                .map(featureFlag -> {
-                    GlobalAndEnabledForUserDTO dto = new GlobalAndEnabledForUserDTO();
-                    dto.setId(featureFlag.getId());
-                    dto.setFeatureName(featureFlag.getFeatureName());
-                    dto.setGlobal(featureFlag.isGlobalEnabled());
-                    return dto;
-                })
+                .map(featureFlag -> new GlobalAndEnabledForUserDTO(featureFlag.getId(), featureFlag.getFeatureName(), featureFlag.isGlobalEnabled()))
                 .toList();
     }
 

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface FeatureFlagService {
     void createFeature(FeatureFlagDTO featureFlagDTO) throws FeatureFlagBadParamException;
-    void switchForUser(UserFeatureDTO userFeatureDTO) throws FeatureFlagBadParamException;
+    void switchForUser(UserFeatureDTO userFeatureDTO, Long userId) throws FeatureFlagBadParamException;
     List<GlobalAndEnabledForUserDTO> getGlobalAndEnabledForUser(Long userId);
 }
 

@@ -39,8 +39,7 @@ class FeatureFlagServiceTest {
 
     @Test
     void createFeature_ShouldSaveFeatureFlag() throws FeatureFlagBadParamException {
-        FeatureFlagDTO featureFlagDTO = new FeatureFlagDTO();
-        featureFlagDTO.setFeatureName("testFeature");
+        FeatureFlagDTO featureFlagDTO = new FeatureFlagDTO("testFeature");
 
         testee.createFeature(featureFlagDTO);
 
@@ -49,15 +48,12 @@ class FeatureFlagServiceTest {
 
     @Test
     void enableForUser_ShouldSaveEnabledFeatureFlagForUser() throws FeatureFlagBadParamException {
-        UserFeatureDTO userFeatureDTO = new UserFeatureDTO();
-        userFeatureDTO.setFeatureFlagId(1L);
-        userFeatureDTO.setUserId(1L);
-        userFeatureDTO.setIsEnabledForUser(true);
+        UserFeatureDTO userFeatureDTO = new UserFeatureDTO(1L, true);
 
-        when(featureFlagRepository.findById(userFeatureDTO.getFeatureFlagId())).thenReturn(Optional.of(mock(FeatureFlag.class)));
-        when(userRepository.findById(userFeatureDTO.getUserId())).thenReturn(Optional.of(mock(User.class)));
+        when(featureFlagRepository.findById(userFeatureDTO.featureFlagId())).thenReturn(Optional.of(mock(FeatureFlag.class)));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mock(User.class)));
 
-        testee.switchForUser(userFeatureDTO);
+        testee.switchForUser(userFeatureDTO, 1L);
 
         verify(userFeatureRepository, times(1)).save(any());
     }

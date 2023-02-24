@@ -8,16 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/feature-flag")
 public interface FeatureFlagRESTService {
 
-    @PostMapping("/create")
-    ResponseEntity<Object> createFeature(@RequestBody @Valid FeatureFlagDTO featureFlagDTO);
+    @PostMapping(("/feature-flag"))
+    ResponseEntity<Object> createFeatureFlag(@RequestBody @Valid FeatureFlagDTO featureFlagDTO);
 
-    @PostMapping("/switchForUser")
-    ResponseEntity<Object> switchForUser(@RequestBody @Valid UserFeatureDTO userFeatureDTO);
+    @PostMapping("/user-feature/switch/users/{user-id}")
+    ResponseEntity<Object> switchUserFeature(@RequestBody @Valid UserFeatureDTO userFeatureDTO, @PathVariable("user-id") @NotNull Long userId);
 
-    @GetMapping("/getGlobalAndEnabledForUser/{userId}")
-    List<GlobalAndEnabledForUserDTO> getGlobalAndEnabledForUser(@PathVariable("userId") @NotNull Long userId);
+    @GetMapping("/global-and-enabled/users/{user-id}")
+    List<GlobalAndEnabledForUserDTO> getGlobalAndEnabledForUser(@PathVariable("user-id") @NotNull Long userId);
 
 }

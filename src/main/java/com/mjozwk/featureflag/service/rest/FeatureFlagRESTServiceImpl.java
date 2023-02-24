@@ -20,7 +20,7 @@ public class FeatureFlagRESTServiceImpl implements FeatureFlagRESTService {
     private final FeatureFlagService featureFlagService;
 
     @Override
-    public ResponseEntity<Object> createFeature(FeatureFlagDTO featureFlagDTO) {
+    public ResponseEntity<Object> createFeatureFlag(FeatureFlagDTO featureFlagDTO) {
         try {
             featureFlagService.createFeature(featureFlagDTO);
         } catch (FeatureFlagBadParamException e) {
@@ -30,9 +30,9 @@ public class FeatureFlagRESTServiceImpl implements FeatureFlagRESTService {
     }
 
     @Override
-    public ResponseEntity<Object> switchForUser(UserFeatureDTO userFeatureDTO) {
+    public ResponseEntity<Object> switchUserFeature(UserFeatureDTO userFeatureDTO, Long userId) {
         try {
-            featureFlagService.switchForUser(userFeatureDTO);
+            featureFlagService.switchForUser(userFeatureDTO, userId);
         } catch (FeatureFlagBadParamException e) {
             return new ResponseEntity<>("Failed to enable feature for user: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         }
